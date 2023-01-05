@@ -15,7 +15,7 @@ You will want to read our kernel anticheat thread before continuing, it
 will have everything you need to get started with bypassing kernel 
 anticheats:
 
-Guide - Kernel Mode Drivers Info for Anticheat Bypass
+[Guide - Kernel Mode Drivers Info for Anticheat Bypass](#)
 
 
 If you manual map your driver, you must clear the traces including PiDDBCacheTable because they detect you based on that.
