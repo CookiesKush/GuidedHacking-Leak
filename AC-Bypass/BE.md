@@ -74,3 +74,38 @@ struct becl_be_data
 </p>
 
 https://www.youtube.com/watch?v=GeZz8xtdLgQ
+
+
+
+In this thread I will share my Discord overlay hook. Same way gamers use discord's features, game hackers can use it as well. Main Discord feature used by game hackers is his hook into game's DirectX or OGL engine. We can abuse this hook and make Discord overlay hook to render our menus. Every anti cheat will block any external process accessing game's memory, but that's not they case for Discord. That's why it's really easy to get your cheat running through Discord overlay hook. Check out the code down below that I provided on how to make Discord overlay hook.
+
+
+using f_present = HRESULT ( __stdcall* )( IDXGISwapChain * pthis, UINT sync_interval, UINT flags );
+f_present o_present = nullptr;
+
+HRESULT __stdcall hk_present( IDXGISwapChain * pthis, UINT sync_interval, UINT flags )
+{
+    std::cout << "okay\n";
+    return o_present( pthis, sync_interval, flags );
+}
+
+void initialize()
+{
+    //hook discord overlay
+    const auto pcall_present_discord = helpers::find_pattern_module( "DiscordHook64.dll",
+        "\xFF\x15\x00\x00\x00\x00\x8B\xD8\xE8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\xEB\x10", "xx????xxx????x????xx" );
+
+    if ( !pcall_present_discord )
+        return;
+
+    const auto poriginal_present = reinterpret_cast< f_present* >( pcall_present_discord + *reinterpret_cast< int32_t* >( pcall_present_discord + 0x2 ) + 0x6 );
+
+    if ( !*poriginal_present )
+        return;
+
+    o_present = *poriginal_present;
+
+    *poriginal_present = hk_present;
+}
+
+
